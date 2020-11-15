@@ -24,13 +24,22 @@ OPPGAVE 3: Eksponer koden fra oppgave 2 som en webtjeneste.
 Klienter skal kunne gjøre en GET til stien /takst med nødvendige innput- parametre som en del av query strengen.
 Responsen skal være en JSON-struktur.
 
-SVAR: Se kode.
+SVAR: Se kode og prøv ut MoonPark-0.0.1-SNAPSHOT.jar.original
 http://localhost:8080/takst?zone=M1&totalMinParked=181 => gir response:
 {"totalMinParked":181,"parkingFeePrHour":60,"weekDay":null,"sum":240}
 http://localhost:8080/takst?zone=M2&totalMinParked=181&weekDay=sunday => gir response:
 {"totalMinParked":181,"parkingFeePrHour":200,"weekDay":"sunday","sum":800}
 http://localhost:8080/takst?zone=M2&totalMinParked=181&weekDay=tuesday => gir response:
 {"totalMinParked":181,"parkingFeePrHour":100,"weekDay":"tuesday","sum":400}
+
+
+OPPGAVE 4: Utvid takstmotoren med støtte for takstsone M3:
+Takst for parkerning i M3 beregnes som følger:
+Mandag til lørdag mellom 08:00 og 16:00 er de første timene gratis, deretter koster det 3 kr pr påbegynte minutt
+Mandag til lørdag utenom disse tidspunktene koster det 3 kr pr min.
+Søndager er parkering gratis
+
+SVAR: Se kode og prøv ut MoonPark-0.0.1-SNAPSHOT.jar.original
 http://localhost:8080/takst?zone=M3&start=2020-11-10T00:00:00&end=2020-11-10T01:00:00 => gir respons: 
 {"totalMinParked":60,"parkingFeePrHour":0,"weekDay":"tuesday","sum":180,"minWeekEvening":0,"minWeekDay":0,"minWeekMorning":60,"minSunday":0,"startTime":"2020-11-10T00:00:00","endTime":"2020-11-10T01:00:00","midnight":"2020-11-10T00:00:00","dayStart":"2020-11-10T08:00:00","eveningStart":"2020-11-10T16:00:00"}
 http://localhost:8080/takst?zone=M3&start=2020-11-14T12:00:00&end=2020-11-14T13:00:00 => gir response: 
@@ -40,14 +49,8 @@ http://localhost:8080/takst?zone=M3&start=2020-11-14T12:00:00&end=2020-11-14T15:
 (trekker fra 60 min på minWeekDay siden den første timen mellom kl 8 og 16 på lørdager er gratis)
 http://localhost:8080/takst?zone=M3&start=2020-11-15T12:00:00&end=2020-11-15T15:00:00 => gir responsen: 
 {"totalMinParked":180,"parkingFeePrHour":0,"weekDay":"sunday","sum":0,"minWeekEvening":0,"minWeekDay":0,"minWeekMorning":0,"minSunday":180,"startTime":"2020-11-15T12:00:00","endTime":"2020-11-15T15:00:00","midnight":"2020-11-15T00:00:00","dayStart":"2020-11-15T08:00:00","eveningStart":"2020-11-15T16:00:00"}
-
-OPPGAVE 4: Utvid takstmotoren med støtte for takstsone M3:
-Takst for parkerning i M3 beregnes som følger:
-Mandag til lørdag mellom 08:00 og 16:00 er de første timene gratis, deretter koster det 3 kr pr påbegynte minutt
-Mandag til lørdag utenom disse tidspunktene koster det 3 kr pr min.
-Søndager er parkering gratis
-
-SVAR: Se kode
+http://localhost:8080/takst?zone=M3&start=2020-11-16T21:00:00&end=2020-11-16T23:00:00 => gir responsen: 
+{"totalMinParked":120,"parkingFeePrHour":0,"weekDay":"monday","sum":360,"minWeekEvening":120,"minWeekDay":0,"minWeekMorning":0,"minSunday":0,"startTime":"2020-11-16T21:00:00","endTime":"2020-11-16T23:00:00","midnight":"2020-11-16T00:00:00","dayStart":"2020-11-16T08:00:00","eveningStart":"2020-11-16T16:00:00"}
 
 
 Oppgave 5: MoonPark ønsker i utgangspunktet at priskalulatoren deres skal være offentlig tilgjengelig.

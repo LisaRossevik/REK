@@ -2,9 +2,15 @@ package com.rek.MoonPark;
 
 public class ParkingBillM2 extends ParkingBillSC implements ParkingBill {
     private int parkingFeePrHour = 100;
+    private String weekDay;
 
     public ParkingBillM2(int totalMinParked, String weekDay) {
-        super(totalMinParked, weekDay);
+        super(totalMinParked);
+        this.weekDay = weekDay;
+    }
+
+    public String getWeekDay() {
+        return weekDay;
     }
 
     @Override

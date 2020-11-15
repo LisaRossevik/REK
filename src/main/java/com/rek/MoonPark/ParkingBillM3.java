@@ -121,22 +121,6 @@ public class ParkingBillM3 extends ParkingBillSC {
         return startOrEnd.getHour() >= 16 && startOrEnd.getHour() <= 24 ? true : false;
     }
 
-    public long calculateMinutesAfterFullWeekDaysRemoved() {
-        //(60*24*7*2) +(60*24*3) + (60*10) + 5         //int totalMinParked = 25085;
-        int oneWeekInMin = 60 * 24 * 7;
-        int oneDayInMin = 60 * 24;
-        //System.out.println("##totalTotalMinParked = " + getTotalMinParked());
-        long weeks = getTotalMinParked() / oneWeekInMin;
-        //System.out.println("##weeks = " + weeks);
-        long restMinutes = getTotalMinParked() % oneWeekInMin;
-        //System.out.println("##restMinutes = " + restMinutes);
-        long days = restMinutes / oneDayInMin;
-        //System.out.println("##days = " + days);
-
-        long minutesAfterFullDaysWeeksRemoved = getTotalMinParked() - (weeks * oneWeekInMin + days * oneDayInMin);
-        return minutesAfterFullDaysWeeksRemoved;
-    }
-
     public long calculateMinutesParkedMorning() {
         long morningMin = 0;
         long period = Duration.between(getStartTime(), getEndTime()).toMinutes();
@@ -145,29 +129,19 @@ public class ParkingBillM3 extends ParkingBillSC {
             if (isMorningTime(getStartTime()) && (getEndTime().isAfter(getDayStart()) || getEndTime().isEqual(getDayStart()))) {
                 morningMin = Duration.between(getStartTime(), getDayStart()).toMinutes();
             }
-            if (isMorningTime(getEndTime()) && (getStartTime().isBefore(getMidnight().plusDays(1)) || getStartTime().isEqual(getMidnight().plusDays(1)))) {
+            if (isMorningTime(getEndTime()) && getStartTime().isEqual(getMidnight().plusDays(1))) {
                 morningMin = Duration.between(getMidnight().plusDays(1), getEndTime()).toMinutes();
             }
-            if ((getStartTime().isBefore(getMidnight()) || getStartTime().isEqual(getMidnight())) && (getEndTime().isAfter(getDayStart()) || getEndTime().isEqual(getDayStart()))) {
+            if (getStartTime().isEqual(getMidnight()) && (getEndTime().isAfter(getDayStart()) || getEndTime().isEqual(getDayStart()))) {
                 morningMin = Duration.between(getMidnight(), getDayStart()).toMinutes();
             }
             if (isMorningTime(getStartTime()) && isMorningTime(getEndTime()) && period < 480) {
                 morningMin = Duration.between(getStartTime(), getEndTime()).toMinutes();
             }
-            if (isMorningTime(getStartTime()) && isMorningTime(getEndTime()) && period > 480) {
-                morningMin = Duration.between(getMidnight(), getEndTime()).toMinutes();
-            }
-        } else if (getEndTime().isAfter(getMidnight().plusDays(1))) {
-            if (isMorningTime(getEndTime())) {
-                morningMin = Duration.between(getMidnight().plusDays(1), getEndTime()).toMinutes();
-            }
-            if (getEndTime().isAfter(getDayStart().plusDays(1))) {
-                morningMin = Duration.between(getMidnight().plusDays(1), getDayStart().plusDays(1)).toMinutes();
-            }
+            return morningMin;
         } else {
-            morningMin = 0;
+            return 0;
         }
-        return morningMin;
     }
 
     public long calculateMinutesParkedDay() {
@@ -189,81 +163,51 @@ public class ParkingBillM3 extends ParkingBillSC {
                     dayMin = 0;
                 }
             }
-            if (isDayTime(getStartTime()) && isDayTime(getEndTime()) && period > 480) {
-                dayMin = Duration.between(getDayStart(), getEndTime()).toMinutes();
-            }
             if (isDayTime(getStartTime()) && (getEndTime().isAfter(getEveningStart()) || getEndTime().isEqual(getEveningStart()))) {
-                long dayMinBeforeFreeHour = Duration.between(getDayStart(), getEveningStart()).toMinutes();
+                long dayMinBeforeFreeHour = Duration.between(getStartTime(), getEveningStart()).toMinutes();
                 if (dayMinBeforeFreeHour >= 60) {
                     dayMin = dayMinBeforeFreeHour - 60;
                 } else {
                     dayMin = 0;
                 }
             }
-        } else if (getEndTime().isAfter(getDayStart().plusDays(1))) {
-            if (isDayTime(getEndTime())) {
-                dayMin = Duration.between(getDayStart().plusDays(1), getEndTime()).toMinutes();
-            }
-            if (getEndTime().isAfter(getEveningStart().plusDays(1))) {
-                dayMin = Duration.between(getDayStart().plusDays(1), getEveningStart().plusDays(1)).toMinutes();
-            }
-        } else {
-            dayMin = 0;
-        }
-        return dayMin;
-       /* }
-        //System.out.println("dayMin = " + getMinWeekDay());
-        if (getDayStart().getDayOfWeek() == DayOfWeek.SUNDAY) {
-            return 0;
-        } else {
             return dayMin;
+        } else {
+            return 0;
         }
-        //return getDayStart().getDayOfWeek() == DayOfWeek.SUNDAY ? 0 : dayMin;*/
     }
 
     public long calculateMinutesParkedEvening() {
         long eveningMin = 0;
         long period = Duration.between(getStartTime(), getEndTime()).toMinutes();
 
-        if (isEveningTime(getStartTime()) && (getEndTime().isAfter(getEveningStart().plusHours(8)) || getEndTime().isEqual(getEveningStart().plusHours(8)))) {
-            eveningMin = Duration.between(getStartTime(), getEveningStart().plusHours(8)).toMinutes();
-        }
-        if ((getStartTime().isBefore(getEveningStart()) || getStartTime().isEqual((getEveningStart()))) && isEveningTime(getEndTime())) {
-            eveningMin = Duration.between(getEveningStart(), getEndTime()).toMinutes();
-        }
-        if ((getStartTime().isBefore(getEveningStart()) || getStartTime().isEqual(getEveningStart())) && (getEndTime().isAfter(getEveningStart().plusHours(8)) || getEndTime().isEqual(getEveningStart().plusHours(8)))) {
-            eveningMin = Duration.between(getEveningStart(), getEveningStart().plusHours(8)).toMinutes();
-        }
-        if (isEveningTime(getStartTime()) && isEveningTime(getEndTime()) && period < 480) {
-            eveningMin = Duration.between(getStartTime(), getEndTime()).toMinutes();
-        }
-        if (isEveningTime(getStartTime()) && isEveningTime(getEndTime()) && period > 480) {
-            eveningMin = Duration.between(getEveningStart().plusDays(1), getEndTime()).toMinutes();
-        }
-        if (isEveningTime(getStartTime()) && (getEndTime().isAfter(getMidnight().plusDays(1)) || getEndTime().isEqual((getMidnight().plusDays(1))))) {
-            eveningMin = Duration.between(getStartTime(), getMidnight().plusDays(1)).toMinutes();
-        }
-
-
-        //setMinWeekMorning(eveningMin);
-        //System.out.println("eveningMin = " + getMinWeekEvening());
-        //System.out.println("getEveningStart().getDayOfWeek() = " + getEveningStart().getDayOfWeek());
-        if (getEveningStart().getDayOfWeek() == DayOfWeek.SUNDAY) {
-            return 0;
-        } else {
+        if (getDayStart().getDayOfWeek() != DayOfWeek.SUNDAY) {
+            if (isEveningTime(getStartTime()) && (getEndTime().isAfter(getEveningStart().plusHours(8)) || getEndTime().isEqual(getEveningStart().plusHours(8)))) {
+                eveningMin = Duration.between(getStartTime(), getEveningStart().plusHours(8)).toMinutes();
+            }
+            if ((getStartTime().isBefore(getEveningStart()) || getStartTime().isEqual((getEveningStart()))) && isEveningTime(getEndTime())) {
+                eveningMin = Duration.between(getEveningStart(), getEndTime()).toMinutes();
+            }
+            if ((getStartTime().isBefore(getEveningStart()) || getStartTime().isEqual(getEveningStart())) && (getEndTime().isAfter(getEveningStart().plusHours(8)) || getEndTime().isEqual(getEveningStart().plusHours(8)))) {
+                eveningMin = Duration.between(getEveningStart(), getEveningStart().plusHours(8)).toMinutes();
+            }
+            if (isEveningTime(getStartTime()) && isEveningTime(getEndTime()) && period < 480) {
+                eveningMin = Duration.between(getStartTime(), getEndTime()).toMinutes();
+            }
             return eveningMin;
+        } else {
+            return 0;
         }
     }
 
     public long calculateMinutesParkedSunday() {
         long sundayMin = 0;
-        //long period = Duration.between(getStartTime(), getEndTime()).toMinutes();
 
-        if (isSunday(getStartTime()) && !isSunday(getEndTime())) {
-            sundayMin = Duration.between(getStartTime(), getMidnight()).toMinutes();
+        if (isSunday(getStartTime()) || getEndTime().isEqual(getEveningStart().plusHours(8))) {
+            sundayMin = Duration.between(getStartTime(), getEveningStart().plusHours(8)).toMinutes();
         }
         if (!isSunday(getStartTime()) && isSunday(getEndTime())) {
-            sundayMin = Duration.between(getMidnight(), getEndTime()).toMinutes() - (24 * 60);
+            sundayMin = Duration.between(getStartTime(), getEndTime()).toMinutes();
         }
         if (isSunday(getStartTime()) && isSunday(getEndTime())) {
             sundayMin = Duration.between(getStartTime(), getEndTime()).toMinutes();
@@ -281,28 +225,10 @@ public class ParkingBillM3 extends ParkingBillSC {
     }
 
     public int claculateTotalPrice() {
-        long minutesLessThan24Hours = calculateMinutesAfterFullWeekDaysRemoved();
-        LocalDateTime newEndTime = getStartTime().plusMinutes(minutesLessThan24Hours);
-        setEndTime(newEndTime);
-        // long period = Duration.between(getStartTime(), getEndTime()).toMinutes();
-        if (isSunday(getStartTime()) && isSunday(getEndTime())) {
+        if ((isSunday(getStartTime()) && getEndTime().isEqual(getEndTime()))  || ((isSunday(getEndTime()) && getStartTime().isEqual(getMidnight())))) {
             sum = 0;
-        } else if (!isSunday(getStartTime()) && isSunday(getEndTime())) {
-            setEndTime(getEndTime().minusMinutes(getMinSunday()));
-            System.out.println("#### getEndTime ()" + getEndTime());
-            long m = calculateMinutesParkedMorning();
-            long d = calculateMinutesParkedDay();
-            long e = calculateMinutesParkedEvening();
-            sum = (int) ((m + e) * weekEveningFee + d * weekDayFee);
-            //  sum = (int) ((getMinWeekMorning() + getMinWeekEvening()) * weekEveningFee + getMinWeekDay() * weekDayFee);
-        } else if (isSunday(getStartTime()) && !isSunday(getEndTime())) {
-            setStartTime(getStartTime().plusMinutes(getMinSunday()));
-            calculateMinutesParkedMorning();
-            calculateMinutesParkedDay();
-            calculateMinutesParkedEvening();
-            sum = (int) ((getMinWeekMorning() + getMinWeekEvening()) * weekEveningFee + getMinWeekDay() * weekDayFee);
-        } else if (!isSunday(getStartTime()) && !isSunday(getEndTime())) {
-            sum = (int) ((getMinWeekMorning() + getMinWeekEvening()) * weekEveningFee + getMinWeekDay() * weekDayFee);
+        } else {
+            sum = (int) (((getMinWeekMorning() + getMinWeekEvening()) * weekEveningFee) + (getMinWeekDay() * weekDayFee));
         }
         return sum;
     }
