@@ -9,7 +9,7 @@ Takst for parkering i M1 beregenes som følger:
 60 kr timen, beregnes for hvert påbegynte minutt.
 Å definere inn og ut verdiene er en del av oppgaven. Det samme gjelder tester.
 
-SVAR : Se kode. Klasse ParkingBillM1.java
+SVAR : Se koden. Klasse ParkingBillM1.java
 
 
 OPPGAVE 2: Skriv kode som beregner takst for en parkering i takstsone M2 (takstsonoe tas her som innput til rutinen).
@@ -31,7 +31,15 @@ http://localhost:8080/takst?zone=M2&totalMinParked=181&weekDay=sunday => gir res
 {"totalMinParked":181,"parkingFeePrHour":200,"weekDay":"sunday","sum":800}
 http://localhost:8080/takst?zone=M2&totalMinParked=181&weekDay=tuesday => gir response:
 {"totalMinParked":181,"parkingFeePrHour":100,"weekDay":"tuesday","sum":400}
-
+http://localhost:8080/takst?zone=M3&start=2020-11-10T00:00:00&end=2020-11-10T01:00:00 => gir respons: 
+{"totalMinParked":60,"parkingFeePrHour":0,"weekDay":"tuesday","sum":180,"minWeekEvening":0,"minWeekDay":0,"minWeekMorning":60,"minSunday":0,"startTime":"2020-11-10T00:00:00","endTime":"2020-11-10T01:00:00","midnight":"2020-11-10T00:00:00","dayStart":"2020-11-10T08:00:00","eveningStart":"2020-11-10T16:00:00"}
+http://localhost:8080/takst?zone=M3&start=2020-11-14T12:00:00&end=2020-11-14T13:00:00 => gir response: 
+{"totalMinParked":60,"parkingFeePrHour":0,"weekDay":"saturday","sum":0,"minWeekEvening":0,"minWeekDay":0,"minWeekMorning":0,"minSunday":0,"startTime":"2020-11-14T12:00:00","endTime":"2020-11-14T13:00:00","midnight":"2020-11-14T00:00:00","dayStart":"2020-11-14T08:00:00","eveningStart":"2020-11-14T16:00:00"}
+http://localhost:8080/takst?zone=M3&start=2020-11-14T12:00:00&end=2020-11-14T15:00:00 => gir responsen:
+{"totalMinParked":180,"parkingFeePrHour":0,"weekDay":"saturday","sum":240,"minWeekEvening":0,"minWeekDay":120,"minWeekMorning":0,"minSunday":0,"startTime":"2020-11-14T12:00:00","endTime":"2020-11-14T15:00:00","midnight":"2020-11-14T00:00:00","dayStart":"2020-11-14T08:00:00","eveningStart":"2020-11-14T16:00:00"}
+(trekker fra 60 min på minWeekDay siden den første timen mellom kl 8 og 16 på lørdager er gratis)
+http://localhost:8080/takst?zone=M3&start=2020-11-15T12:00:00&end=2020-11-15T15:00:00 => gir responsen: 
+{"totalMinParked":180,"parkingFeePrHour":0,"weekDay":"sunday","sum":0,"minWeekEvening":0,"minWeekDay":0,"minWeekMorning":0,"minSunday":180,"startTime":"2020-11-15T12:00:00","endTime":"2020-11-15T15:00:00","midnight":"2020-11-15T00:00:00","dayStart":"2020-11-15T08:00:00","eveningStart":"2020-11-15T16:00:00"}
 
 OPPGAVE 4: Utvid takstmotoren med støtte for takstsone M3:
 Takst for parkerning i M3 beregnes som følger:
