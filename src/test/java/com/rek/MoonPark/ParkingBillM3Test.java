@@ -1,5 +1,6 @@
 package com.rek.MoonPark;
 
+import com.rek.MoonPark.model.ParkingBillM3;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -123,7 +124,6 @@ public class ParkingBillM3Test {
         ParkingBillM3 pbw = new ParkingBillM3(startTime, endTime);
         assertEquals(480, pbw.getSum());
     }
-
 
 
 }

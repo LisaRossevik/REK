@@ -74,3 +74,11 @@ Vi kan oppfordre dem til å bruke bulk og batch endepunkt, slik som Update Many 
 Oppfordre til chasching av data på klient side.
 
 Jeg ville forslått strategi nr 1 over, da det er enklest for oss å implementere uten å involvere klientene.
+
+
+EKSTRA:
+1. La til en "in memory" database for lagring av kjøpte/betalte parkerings avgifter.
+2. La til /M1 stien som viser alle registerte betalinger i sone M1 og /M1/id stien som finner M1 betaling med en bestemt id.
+3. La til /M2 stien som viser alle registerte betalinger i sone M2 og /M2/id stien som finner M2 betaling med en bestemt id.
+4. La til /M3 stien som viser alle registerte betalinger i sone M3 og /M3/id stien som finner M3 betaling med en bestemt id.
+

@@ -1,5 +1,6 @@
 package com.rek.MoonPark;
 
+import com.rek.MoonPark.model.ParkingBillM1;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
